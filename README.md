@@ -1,4 +1,3 @@
-markdown
 # Word查重系统 
 
 ##项目简介
@@ -68,7 +67,7 @@ Word查重系统是一个基于Web的文档相似度检测平台，支持管理�
 
 1. **克隆项目**
    ```bash
-   git clone 
+   git clone https://github.com/merilyn122/word-duplicate-checker-frontend
    cd word-duplicate-checker-frontend
    ```
    或者直接在Github界面code下载zip再在IDE中运行
