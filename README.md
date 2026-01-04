@@ -188,6 +188,78 @@ const errorResponse: ApiResponse = {
 - 每个模块在 `src/store/slices` 下创建切片
 - 使用 `useAppSelector` 和 `useAppDispatch` 访问状态
 
+恭喜成功！为了确保后端开发者清楚这是个**临时方案**，并在完成后能**顺利还原**，请在项目的 `README.md` 文件中添加以下章节。
+
+你可以将以下内容直接复制到 `README.md` 的末尾或“开发说明”部分。
+
+---
+
+## 前端登录功能临时模拟方案说明
+
+### 背景
+在项目初期或后端API尚未就绪时，为了测试前端登录流程及相关权限功能，前端采用了一种**临时模拟方案**。该方案将登录验证逻辑写死在前端代码中，**仅用于开发和演示**。
+
+### 受影响文件
+- **主要文件**：`src/api/auth.ts` - 登录、登出、获取用户信息接口已被模拟。
+
+### 临时方案详情
+当前，`auth.ts` 中的 `login` 函数包含硬编码的验证逻辑，核心代码如下：
+```typescript
+// 模拟验证逻辑（位于 login 函数内）
+const HARD_CODED_USERNAME = 'admin';
+const HARD_CODED_PASSWORD = 'password'; // 与项目根目录 `db.json` 中的密码一致
+
+if (credentials.username === HARD_CODED_USERNAME && 
+    credentials.password === HARD_CODED_PASSWORD) {
+    // 返回模拟的成功数据
+    return {
+        token: 'eyJ...mock_token',
+        user: { id: '1', username: 'admin', email: '2212023096@qq.com', role: 'administrator' }
+    };
+}
+```
+**测试账户**：
+- **用户名**：`admin`
+- **密码**：`password` (全小写)
+
+**测试方式**：
+npm运行本项目后，在浏览器的 http://localhost:3000/login 中输入测试账户用户名及密码，即可查看模拟界面
+
+### 后端就绪后的还原步骤
+在后端开发者检查完毕模拟界面后，请开发并准备真实的后端API服务，此前请**必须**执行以下还原操作：
+
+#### 第一步：恢复 `src/api/auth.ts` 文件
+将此文件**完全恢复**为原始的、真正发送网络请求的版本(源代码已备份于backup中，即将src/api/auth.ts改为backup/auth.ts)
+
+
+#### 第二步：检查并恢复 `src/api/index.ts` 配置
+确保 `API_BASE_URL` 指向正确的后端服务地址（根据 `.env.development` 等环境变量配置）。通常应为：
+```typescript
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:3000/api'; // 请根据实际后端端口调整
+```
+
+#### 第三步：移除模拟数据文件
+删除项目根目录下为模拟服务创建的 `db.json`、`server.js` 等临时文件。
+
+#### 第四步：更新依赖（如果安装了模拟包）
+如果之前运行过 `npm install json-server --save-dev`，可以考虑从 `package.json` 的 `devDependencies` 中移除 `json-server`，并运行 `npm install` 以清理依赖。
+
+### 还原验证清单
+完成上述还原后，请验证以下事项：
+- [ ] `auth.ts` 中的 `login` 函数 **不再包含** `HARD_CODED_USERNAME` 和 `HARD_CODED_PASSWORD` 等硬编码逻辑。
+- [ ] `API_BASE_URL` 已配置为后端服务器的正确地址和端口（如 `http://localhost:8080`）。
+- [ ] 后端服务已启动并在指定端口监听。
+- [ ] 在前端使用真实的后端管理员账户进行登录测试，功能正常。
+
+### 遇到问题？
+如果在切换回真实后端时遇到登录问题，请按以下步骤排查：
+1. **检查网络请求**：打开浏览器开发者工具的“网络(Network)”选项卡，查看登录请求的URL、状态码和响应体。
+2. **确认CORS**：确保后端服务已正确配置CORS，允许前端源（如 `http://localhost:3000`）进行跨域请求。
+3. **核对接口格式**：验证后端 `/auth/login` 接口返回的JSON数据结构是否与前端 `auth.ts` 中解析的格式（`token`, `user` 等字段）一致。
+
+---
+**请后端开发者在完成API开发后，务必通知前端开发者协同完成上述还原步骤，以确保系统切换至真实认证流程。**
+
 ## 常见问题
 
 ### 1. 启动时出现端口冲突
