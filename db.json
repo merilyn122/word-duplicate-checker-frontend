@@ -1,0 +1,18 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "username": "admin",
+      "password": "password",
+      "email": "2212023096@qq.com",
+      "role": "administrator"
+    }
+  ],
+  "auth": [
+    {
+      "id": 1,
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.mock-jwt-token",
+      "userId": 1
+    }
+  ]
+}
